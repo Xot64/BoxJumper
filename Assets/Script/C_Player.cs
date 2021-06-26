@@ -15,11 +15,14 @@ public class C_Player : MonoBehaviour
     GameObject newBox;
     int col = 0;
     public Text[] text = new Text[4];
+    float[,] cLego = {{ 200, 210, 245 }, { 188, 238, 235 }, { 224, 182, 238 }, { 250, 245, 194 }, { 255, 172, 192 } };
 
     // Start is called before the first frame update
     void Start()
     {
-
+        for (int c1 = 0; c1 < 5; c1++)
+            for (int c2 = 0; c2 < 3; c2++)
+                cLego[c1,c2] /= 255f;
     }
     Vector3[] boxSizes;
     Transform[] boxes;
@@ -110,17 +113,17 @@ public class C_Player : MonoBehaviour
                 newBox.GetComponent<Rigidbody>().useGravity = true;
                 newBox.GetComponent<BoxCollider>().enabled = true;
                 Transform[] mr = newBox.GetComponentsInChildren<Transform>();
-                Color nC = Color.black;
-                while (nC == Color.black)
-                {
-                    nC = new Color(Random.Range(0, 2) * 0.98f, Random.Range(0, 2) * 0.98f, Random.Range(0, 2) * 0.98f);
-                }
+
+                int randomColor = Random.Range(0, 5);
+                Color nC = new Color(cLego[randomColor, 0], cLego[randomColor, 1], cLego[randomColor, 2]);
+                
                 foreach (Transform t in mr)
                 {
 
                     t.GetComponent<Renderer>().material = materials[0];
                     t.GetComponent<Renderer>().material.color = nC;
                 }
+
                 newBox.layer = 6;
                 newBox = null;
             }

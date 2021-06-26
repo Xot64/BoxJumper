@@ -4,33 +4,38 @@ using UnityEngine;
 
 public class C_Area : MonoBehaviour
 {
-    public GameObject wall, floor, bulpa;
+    public GameObject wall, floor, bulpa, star;
     public GameObject[] portals = new GameObject[4];
     public Transform[] area = new Transform[3];
     public Vector3Int size = new Vector3Int(8,8,8);
     public int doors = 1;
-    Vector3Int[] doorCoord;
+    Vector3Int doorCoord;
+    Vector3[] starCoord = new Vector3[3];
     // Start is called before the first frame update
     void Start()
     {
         doors = C_GameValues.World;
         size = Vector3Int.one * (4 + C_GameValues.level);
-        doorCoord = new Vector3Int[doors];
-        for (int d = 0; d < doors; d++)
+        doorCoord = new Vector3Int(Random.Range(0, size.x), Random.Range(2, size.y), 0);
+        int[] limits = { 1, size.x - 1, 0, doorCoord.y - 1, 1, size.z - 1 };
+        
+        for (int d = 0; d < starCoord.Length; d++)
         {
+            bool onFloor = Random.Range(0f, 1f) >= 0.5f;
             bool isNew = false;
             while (!isNew)
             {
-                int[] limits = { 1, size.x - 1, 2, size.y - 1 };
                 isNew = true;
-                doorCoord[d] = new Vector3Int(Random.Range(limits[0], limits[1] + 1), Random.Range(limits[2], limits[3] + 1),0);
+                starCoord[d] = new Vector3(Random.Range(limits[0], limits[1] + 1), !onFloor ? Random.Range(limits[2], limits[3] + 1) : 0, onFloor ? -Random.Range(limits[2], limits[3] + 1) : 0) + new Vector3(0.5f,0.5f,-0.5f);
                 for (int i = 0; i < d; i++)
                 {
-                    if (doorCoord[i] == doorCoord[d]) isNew = false;
+                    if (starCoord[i] == starCoord[d]) isNew = false;
                 }
             }
+            Instantiate(star, starCoord[d], Quaternion.identity);
         }
-
+        
+        
         genWall(floor, area[0], 0, 2);
         genWall(wall, area[1], 0, 1);
 
@@ -91,16 +96,11 @@ public class C_Area : MonoBehaviour
             for (c0[c2] = 0; c0[c2] < size[c2]; c0[c2]++)
             {
                 generate = gO;
-                for (int d = 0; d < doors; d++)
+                if (doorCoord == c0)
                 {
-                    if (doorCoord[d] == c0)
-                    {
-                        portal.GetComponent<C_Finish>().exit = (d == 0);
-                        generate = portal;
-                        continue;
-                    }
+                    portal.GetComponent<C_Finish>().exit = true;
+                    generate = portal;
                 }
-
                 GameObject block = Instantiate(generate, C_MF.mulVec3(c0, (Vector3Int.one + 2 * Vector3Int.back)) + offset, Quaternion.Euler(angle), par);
                 block.name = string.Format("{0}_{1}_{2}", generate.name, c0[c1], c0[c2]); 
             }
