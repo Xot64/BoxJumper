@@ -11,10 +11,8 @@ public class C_BoxCollider : MonoBehaviour
     {
         
     }
-    void Update()
-    {
-        
-    }
+    
+    
     private void OnTriggerEnter(Collider other)
     {
         trig = other;

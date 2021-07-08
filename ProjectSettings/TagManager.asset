@@ -7,6 +7,9 @@ TagManager:
   - Unvis
   - Wall
   - board
+  - Floor
+  - Box
+  - Star
   layers:
   - Default
   - TransparentFX

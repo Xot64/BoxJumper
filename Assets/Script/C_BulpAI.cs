@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using static C_MF;
 
 
@@ -12,6 +12,9 @@ public class C_BulpAI : MonoBehaviour
     float t;
     bool finish = false;
     float walkSpeed = 1f;
+    //[HideInInspector]
+    public int stars = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,33 +44,6 @@ public class C_BulpAI : MonoBehaviour
 
     private void FixedUpdate()
     {
-        /*dxP = Mathf.Abs(transform.position.x - 0.5f - Mathf.Floor(transform.position.x -0.5f));
-        dzP = Mathf.Abs(transform.position.z - 0.5f - Mathf.Floor(transform.position.z -0.5f));
-        if ((dxP < 0.1f) && ((dzP < 0.1f)) && (Mathf.Abs(C_MF.toRotation(transform.eulerAngles.y, direct)) < 0.05) && !onAir && !onSpin)
-        {
-            switch (checkBoxes())
-            {
-                case 0:
-                    AS = S = state.Walk;
-                    
-                    break;
-                case 1:
-                    AS = S = state.Flip;               
-                    break;
-                case 2:
-                    S = state.TurnLeft;
-                    AS = state.Walk;
-                    direct -= 90;
-                    break;
-                case 3:
-                    AS = S = state.DownJump;
-                    break;
-                case 4:
-                    finish = true;
-                    finishTime = Time.time;
-                    break;
-            }
-        }*/
         int cb = checkBoxes();
         if (!onAir && !onSpin && !finish)
         {
@@ -102,7 +78,7 @@ public class C_BulpAI : MonoBehaviour
                     finish = true;
                     finishTime = Time.time;
                     transform.position += Vector3.up / 4;
-                    GetComponentsInChildren<Transform>()[1].localPosition = Vector3.down / 4;
+                    GetComponentsInChildren<Transform>()[1].localPosition = Vector3.down * 0.3f;
                     GetComponent<Rigidbody>().useGravity = false;
                     Vector3 vacuum = portal.transform.position - transform.position + Vector3.back/2;
                     GetComponent<Rigidbody>().velocity = (vacuum).normalized * (vacuum.magnitude / finishDelay);
@@ -113,39 +89,12 @@ public class C_BulpAI : MonoBehaviour
         spin();
         if (finish)
         {
+            C_GameValues.status = 1;
             if (Time.time - finishTime <= finishDelay)
             {
                 transform.Rotate(Vector3.forward * finishAngle);
                 
                 transform.localScale = Vector3.one * ((finishDelay + 0.1f) - (Time.time - finishTime)) / finishDelay;
-            }
-            else if (Time.time - finishTime <= 2* finishDelay)
-            {
-                if  (portal != null)
-                {
-                    bool exit = portal.GetComponent<C_Finish>().exit;
-                    if (!exit)
-                    {
-                        portal.GetComponent<C_Finish>().boom(finishDir != Vector3.up);
-                    }
-                    else
-                    {
-                        C_GameValues.level++;
-                        if (C_GameValues.level > 4)
-                        {
-                            C_GameValues.level = 1;
-                            C_GameValues.World++;
-                        }
-                        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-                    }
-                }
-                transform.position = start.transform.position + Vector3.up / 2;
-                transform.Rotate(Vector3.up * finishAngle);
-                transform.localScale = Vector3.one * ((Time.time - finishTime) - finishDelay) / finishDelay;
-            }
-            else if (Time.time - finishTime <= 2 * finishDelay + 0.5f)
-            {
-                transform.eulerAngles = Vector3.zero;
             }
             else
             {
@@ -174,18 +123,18 @@ public class C_BulpAI : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if ((collision.collider.tag != "Unvis") && (collision.collider.tag != ""))
+        if ((collision.collider.tag != "Unvis") && (collision.collider.tag != "") && (collision.collider.tag != "Star"))
         {
             if (onAir) transform.position = new Vector3(Mathf.Floor(transform.position.x) + 0.5f, transform.position.y, Mathf.Floor(transform.position.z) + 0.5f);
-            onAir = false;
-            
+            onAir = false; 
         }
 
     }
 
+  
     private void OnCollisionStay(Collision collision)
     {
-        if ((collision.collider.tag != "Unvis") && (collision.collider.tag != ""))
+        if ((collision.collider.tag != "Unvis") && (collision.collider.tag != "") && (collision.collider.tag != "Star"))
         {
             onAir = false;
            
@@ -193,7 +142,7 @@ public class C_BulpAI : MonoBehaviour
     }
     private void OnCollisionExit(Collision collision)
     {
-        if ((collision.collider.tag != "Unvis") && (collision.collider.tag != ""))
+        if ((collision.collider.tag != "Unvis") && (collision.collider.tag != "") && (collision.collider.tag != "Star"))
         {
             onAir = true;
         }
@@ -231,12 +180,23 @@ public class C_BulpAI : MonoBehaviour
     public Transform eye;
     int checkBoxes()
     {
+        
         // 0 - Шаг вперед
         // 1 - Прыгнуть вверх
         // 2 - Прыгнуть невозможно - поворот
         // 3 - Прыгнуть вниз
         // 4 - Выход
         C_BoxCollider[] eyes = eye.GetComponentsInChildren<C_BoxCollider>();
+        if (eyes[7].tag == "Star" && eyes[7].trig != null)
+        {
+
+            Destroy(eyes[7].trig.gameObject);
+            eyes[7].tag = "";
+            eyes[7].trig = null;
+            stars++;
+
+        }
+
         if (eyes[0].tag == "Finish")
         {
             //   Debug.Log(string.Format("Вижу ВЫХОД"));
@@ -273,10 +233,10 @@ public class C_BulpAI : MonoBehaviour
            // S = state.Falling;
             return 4;
         }
-        if ((eyes[4].tag != "Unvis") && (eyes[4].tag != ""))
+        if ((eyes[4].tag != "Unvis") && (eyes[4].tag != "") && (eyes[4].tag != "Star"))
         {
            // Debug.Log(string.Format("Впереди ящик"));
-            if ((eyes[3].tag != "Unvis") && (eyes[3].tag != ""))
+            if ((eyes[3].tag != "Unvis") && (eyes[3].tag != "") && (eyes[3].tag != "Star"))
             {
                 //       Debug.Log(string.Format("Не могу запрыгнуть"));
             //    S = state.TurnLeft;
@@ -292,7 +252,7 @@ public class C_BulpAI : MonoBehaviour
         else
         {
           //  Debug.Log(string.Format("Впереди ящика нет"));
-            if ((eyes[5].tag != "Unvis") && (eyes[5].tag != ""))
+            if ((eyes[5].tag != "Unvis") && (eyes[5].tag != "") && (eyes[5].tag != "Star"))
             {
                 //     Debug.Log(string.Format("Могу идти вперед"));
              //   S = state.Walk;
@@ -301,7 +261,7 @@ public class C_BulpAI : MonoBehaviour
             else
             {
            //     Debug.Log(string.Format("Впереди спуск"));
-                if ((eyes[6].tag != "Unvis") && (eyes[6].tag != ""))
+                if ((eyes[6].tag != "Unvis") && (eyes[6].tag != "") && (eyes[6].tag != "Star"))
                 {
                     //        Debug.Log(string.Format("Могу спрыгнуть"));
             //        S = state.DownJump;

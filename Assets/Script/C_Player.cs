@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class C_Player : MonoBehaviour
 {
     //public GameObject[] Figures;
     Vector3 direct = new Vector3(1f, 1f, -1f);
+
+    
     public GameObject cubes;
     public GameObject box;
     public int maxBoxes = 8;
@@ -14,12 +17,12 @@ public class C_Player : MonoBehaviour
     GameObject takingBlock;
     GameObject newBox;
     int col = 0;
-    public Text[] text = new Text[4];
+    public Text text;
     float[,] cLego = {{ 200, 210, 245 }, { 188, 238, 235 }, { 224, 182, 238 }, { 250, 245, 194 }, { 255, 172, 192 } };
-
     // Start is called before the first frame update
     void Start()
     {
+       
         for (int c1 = 0; c1 < 5; c1++)
             for (int c2 = 0; c2 < 3; c2++)
                 cLego[c1,c2] /= 255f;
@@ -32,7 +35,7 @@ public class C_Player : MonoBehaviour
         Ray ray = gameObject.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         bool stat = false;
-        text[0].text = string.Format("{0}-{1}", C_GameValues.World, C_GameValues.level);
+        text.text = string.Format("LEVEL {0}",  C_GameValues.level);
         if (Input.GetButtonDown("Fire1"))
         {
             if (Physics.Raycast(ray, out hit, 1000f, 3 << 6))
@@ -174,5 +177,16 @@ public class C_Player : MonoBehaviour
             
         }
     }
-    
+
+    public void Reload()
+    {
+        C_GameValues.status = 0;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    public void nextLevel()
+    {
+        C_GameValues.level++;
+        Reload();
+    }    
+
 }

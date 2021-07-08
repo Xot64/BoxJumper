@@ -11,13 +11,11 @@ GameObject:
   - component: {fileID: 3676842453808782195}
   - component: {fileID: 3676842453808782204}
   - component: {fileID: 3676842453808782205}
-  - component: {fileID: 3676842453808782194}
-  - component: {fileID: -1389411410012912110}
   - component: {fileID: -4323006198825895487}
   - component: {fileID: 454404920629264521}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: STAR
-  m_TagString: Box
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -85,35 +83,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &3676842453808782194
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3676842453808782192}
-  m_Material: {fileID: 13400000, guid: 5a2274804d4d40e4a8523d0436bc2a2c, type: 2}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &-1389411410012912110
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3676842453808782192}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 122
-  m_CollisionDetection: 0
 --- !u!111 &-4323006198825895487
 Animation:
   m_ObjectHideFlags: 0

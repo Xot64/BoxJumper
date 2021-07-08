@@ -14,7 +14,6 @@ public class C_Area : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        doors = C_GameValues.World;
         size = Vector3Int.one * (4 + C_GameValues.level);
         doorCoord = new Vector3Int(Random.Range(0, size.x), Random.Range(2, size.y), 0);
         int[] limits = { 1, size.x - 1, 0, doorCoord.y - 1, 1, size.z - 1 };
@@ -47,7 +46,7 @@ public class C_Area : MonoBehaviour
 
         Transform[] fB= GetComponentsInChildren<Transform>()[1].gameObject.GetComponentsInChildren<Transform>();
         Transform bulpaSpawner = fB[fB.Length - 5];
-        GameObject jumper = Instantiate(bulpa, bulpaSpawner.transform.position + Vector3.up/2, Quaternion.identity);
+        GameObject jumper = Instantiate(bulpa, bulpaSpawner.transform.position + Vector3.up/2, Quaternion.Euler(0f,90f,0f));
         jumper.name = "Bulpa";
         jumper.GetComponent<C_BulpAI>().start = bulpaSpawner.gameObject;
     }
